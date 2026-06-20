@@ -216,6 +216,7 @@ async function main() {
       create: event,
     });
   }
+  console.log("Seeded events:", events.length)
 
 
 console.log("EVENT IDS:", eventIds)

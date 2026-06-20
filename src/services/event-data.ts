@@ -209,27 +209,44 @@ function toCsvEvent(
 let eventCache: CsvEvent[] | null = null;
 
 export async function loadCsvEvents() {
- if (eventCache && process.env.NODE_ENV === "production") return eventCache;
+  try {
+    console.log("EVENT_DATA_DIR:", EVENT_DATA_DIR);
 
-  const fileNames = (await readdir(EVENT_DATA_DIR))
-    .filter((fileName) => fileName.toLowerCase().endsWith(".csv"))
-    .sort();
+    const fileNames = (await readdir(EVENT_DATA_DIR))
+      .filter((fileName) => fileName.toLowerCase().endsWith(".csv"))
+      .sort();
 
-  const events = (
-    await Promise.all(
-      fileNames.map(async (fileName) => {
-        const text = await readFile(path.join(EVENT_DATA_DIR, fileName), "utf8");
-        return parseCsv(text)
-          .map((row, index) => toCsvEvent(row, fileName, index))
-          .filter((event): event is CsvEvent => Boolean(event));
-      })
-    )
-  ).flat();
+    console.log("CSV FILES:", fileNames);
 
-  eventCache = events.sort((a, b) => a.eventDate.localeCompare(b.eventDate));
-  return eventCache;
+    const events = (
+      await Promise.all(
+        fileNames.map(async (fileName) => {
+          const filePath = path.join(EVENT_DATA_DIR, fileName);
+
+          console.log("READING:", filePath);
+
+          const text = await readFile(filePath, "utf8");
+
+          return parseCsv(text)
+            .map((row, index) => toCsvEvent(row, fileName, index))
+            .filter((event): event is CsvEvent => Boolean(event));
+        })
+      )
+    ).flat();
+
+    console.log("EVENT COUNT:", events.length);
+
+    eventCache = events.sort((a, b) =>
+      a.eventDate.localeCompare(b.eventDate)
+    );
+
+    return eventCache;
+  } catch (error) {
+    console.error("CSV LOAD ERROR:", error);
+    return [];
+  }
+  
 }
-
 export async function findCsvEvent(eventId: string) {
   const events = await loadCsvEvents();
   return events.find((event) => event.id === eventId) ?? null;
