@@ -28,18 +28,16 @@ model User {
 }
 
 model Event {
-  id           String             @id @default(cuid())
-  title        String
-  description  String
-  category     String
-  imageUrl     String
-  location     String
-  latitude     Float
-  longitude    Float
-  eventDate    DateTime
-  createdAt    DateTime           @default(now())
-  swipes       Swipe[]
-  matches      Match[]
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String
+  imageUrl    String
+  location    String
+  latitude    Float
+  longitude   Float
+  eventDate   DateTime
+  createdAt   DateTime @default(now())
 }
 
 model EventParticipant {
@@ -75,9 +73,8 @@ model Swipe {
   liked      Boolean
   createdAt  DateTime @default(now())
 
-  event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  fromUser User  @relation("SwipesGiven", fields: [fromUserId], references: [id], onDelete: Cascade)
-  toUser   User  @relation("SwipesReceived", fields: [toUserId], references: [id], onDelete: Cascade)
+  fromUser User @relation("SwipesGiven", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser   User @relation("SwipesReceived", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, fromUserId, toUserId])
   @@index([eventId, toUserId])
@@ -90,9 +87,8 @@ model Match {
   userBId   String
   createdAt DateTime @default(now())
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userA User  @relation("MatchesAsUserA", fields: [userAId], references: [id], onDelete: Cascade)
-  userB User  @relation("MatchesAsUserB", fields: [userBId], references: [id], onDelete: Cascade)
+  userA User @relation("MatchesAsUserA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("MatchesAsUserB", fields: [userBId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userAId, userBId])
   @@index([userAId])
