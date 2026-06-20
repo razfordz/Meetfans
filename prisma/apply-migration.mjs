@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import Database from "better-sqlite3";
 
 const root = process.cwd();
 const dbPath = path.join(root, "prisma", "dev.db");
@@ -22,7 +21,6 @@ if (fs.existsSync(dbPath)) {
 const db = new Database(dbPath);
 const migrationSql = fs.readFileSync(migrationPath, "utf8");
 
-db.exec("PRAGMA foreign_keys = ON;");
 db.exec(migrationSql);
 db.close();
 
