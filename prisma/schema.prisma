@@ -38,7 +38,6 @@ model Event {
   longitude    Float
   eventDate    DateTime
   createdAt    DateTime           @default(now())
-  participants EventParticipant[]
   swipes       Swipe[]
   matches      Match[]
 }
@@ -49,8 +48,7 @@ model EventParticipant {
   eventId  String
   joinedAt DateTime @default(now())
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
   @@index([eventId])
