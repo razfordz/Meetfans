@@ -217,17 +217,27 @@ async function main() {
     });
   }
 
-  await prisma.$executeRawUnsafe("PRAGMA foreign_keys = OFF");
-  for (const eventId of eventIds) {
-    for (const user of savedUsers) {
-      await prisma.eventParticipant.upsert({
-        where: { userId_eventId: { userId: user.id, eventId } },
-        update: {},
-        create: { userId: user.id, eventId },
-      });
-    }
-  }
-}
+
+console.log("EVENT IDS:", eventIds)
+
+// for (const eventId of eventIds) {
+
+//   for (const user of savedUsers) {
+//     await prisma.eventParticipant.upsert({
+//       where: {
+//         userId_eventId: {
+//           userId: user.id,
+//           eventId
+//         }
+//       },
+//       update: {},
+//       create: {
+//         userId: user.id,
+//         eventId
+//       }
+//     })
+//   }
+// }
 
 main()
   .catch((error) => {
@@ -237,3 +247,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+}
